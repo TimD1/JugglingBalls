@@ -4,10 +4,6 @@ import math
 import time
 import curses
 
-# Register
-power_mgmt_1 = 0x6b
-power_mgmt_2 = 0x6c
-
 def read_byte(reg):
 	return bus.read_byte_data(address, reg)
 
@@ -23,11 +19,6 @@ def read_word_2c(reg):
 		return -((65535 - val) + 1)
 	else:
 		return val
-
-
-address = 0x68
-bus = smbus.SMBus(1) 
-bus.write_byte_data(address, power_mgmt_1, 0)
 
 def show_data(window):
     try:
@@ -47,7 +38,6 @@ def show_data(window):
         a_x0 = read_word_2c(0x3b)
         a_y0 = read_word_2c(0x3d)
         a_z0 = read_word_2c(0x3f)
-
 
         while True:
 
@@ -82,8 +72,6 @@ def show_data(window):
             window.addstr("\tO_z:  %5f (deg)\n" % O_z)
             window.addstr("\tO_dt: %5f\n" % O_dt)
 
-
-
             window.addstr("\n\n\tAcceleration\n")
             window.addstr("\t------------\n")
 
@@ -99,11 +87,21 @@ def show_data(window):
             window.addstr("\ta_y: %5d\t scaled: %5f (g)\n" % (a_y, a_y_scaled))
             window.addstr("\ta_z: %5d\t scaled: %5f (g)\n\n" % (a_z, a_z_scaled))
 
-
             window.refresh()
             window.clear()
 
     except KeyboardInterrupt:
         exit(0)
 
-curses.wrapper(show_data)
+
+
+if __name__ == "__main__":
+
+    power_mgmt_1 = 0x6b
+    power_mgmt_2 = 0x6c
+
+    address = 0x68
+    bus = smbus.SMBus(1) 
+    bus.write_byte_data(address, power_mgmt_1, 0)
+
+    curses.wrapper(show_data)
